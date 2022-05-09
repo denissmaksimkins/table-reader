@@ -19,11 +19,7 @@ CREATE TABLE IF NOT EXISTS students (
 	PRIMARY KEY(id AUTOINCREMENT)
 );`
 	// Statement for adding a new entry into `students` table.
-
-	deleteStudentsStmt = `DELETE FROM students WHERE name = ` // I don't know what condition to write
-
 	insertStudentsStmt = `INSERT INTO students (name, surname) VALUES(?, ?)`
-
 	// Statement for getting all entries from `students` table.
 	selectStudentsStmt = `SELECT name, surname FROM students`
 )
@@ -83,16 +79,11 @@ func (s Storage) Students() ([]StudentEntry, error) {
 	return entries, nil
 }
 
-
-func (s *Storage) DeleteStudent(name, surname string) error {
-	res, err := s.db.Exec(deleteStudentsStmt, name, surname)
-
 // AddStudent appends a new student entry to the database.
 func (s *Storage) AddStudent(name, surname string) error {
 	// Attempt to add an entry to the database first.
 	// If it fails, the student field will not be modified.
 	res, err := s.db.Exec(insertStudentsStmt, name, surname)
-
 	if err != nil {
 		return fmt.Errorf("table creation failed. Query: %v\nError: %v", createTableStmt, err)
 	}
