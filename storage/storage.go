@@ -20,8 +20,6 @@ CREATE TABLE IF NOT EXISTS students (
 );`
 	// Statement for adding a new entry into `students` table.
 
-	deleteStudentsStmt = `DELETE FROM students WHERE name = ` // I don't know what condition to write
-
 	insertStudentsStmt = `INSERT INTO students (name, surname) VALUES(?, ?)`
 
 	// Statement for getting all entries from `students` table.
@@ -36,7 +34,7 @@ type StudentEntry struct {
 
 // Storage is an interface for interacting with persistent storage.
 type Storage struct {
-	db *sqlx.DB
+	DB *sqlx.DB
 }
 
 // New initializes a new DB given its path, or opens an existing DB, and
@@ -57,7 +55,7 @@ func New(path string) (*Storage, error) {
 		log.Printf("%d rows affected.", cnt)
 	}
 
-	return &Storage{db: db}, nil
+	return &Storage{DB: db}, nil
 }
 
 func Must(s *Storage, err error) *Storage {
@@ -69,7 +67,7 @@ func Must(s *Storage, err error) *Storage {
 
 // Close closes the database after it is no longer required.
 func (s *Storage) Close() error {
-	return s.db.Close()
+	return s.DB.Close()
 }
 
 // Students returns a slice of existing students.
@@ -77,21 +75,17 @@ func (s Storage) Students() ([]StudentEntry, error) {
 	var entries []StudentEntry
 	// Read rows from the `students` table and populate students field in the
 	// handler.
-	if err := s.db.Select(&entries, selectStudentsStmt); err != nil {
+	if err := s.DB.Select(&entries, selectStudentsStmt); err != nil {
 		return nil, fmt.Errorf("querying 'students' table failed. Query: %v\nError: %v", selectStudentsStmt, err)
 	}
 	return entries, nil
 }
 
-
-func (s *Storage) DeleteStudent(name, surname string) error {
-	res, err := s.db.Exec(deleteStudentsStmt, name, surname)
-
 // AddStudent appends a new student entry to the database.
 func (s *Storage) AddStudent(name, surname string) error {
 	// Attempt to add an entry to the database first.
 	// If it fails, the student field will not be modified.
-	res, err := s.db.Exec(insertStudentsStmt, name, surname)
+	res, err := s.DB.Exec(insertStudentsStmt, name, surname)
 
 	if err != nil {
 		return fmt.Errorf("table creation failed. Query: %v\nError: %v", createTableStmt, err)

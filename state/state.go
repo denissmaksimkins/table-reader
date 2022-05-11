@@ -36,3 +36,9 @@ func (v *State) Quit() {
 func (v *State) ShouldQuit() bool {
 	return v.quit
 }
+
+func DeleteRecordByID(id int, state *State) error {
+	const deleteByIdStatement = `DELETE FROM students WHERE id = ?`
+	_, err := state.storage.DB.Exec(deleteByIdStatement, id)
+	return err
+}
