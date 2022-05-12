@@ -25,7 +25,7 @@ func MainMenu(th *material.Theme, state *state.State) Screen {
 			return AddStudent(th, state), d
 		}
 		if list.Clicked() {
-			return ListStudent(th, state), d
+			return ListTable(th, state), d
 		}
 		if quit.Clicked() {
 			state.Quit()

@@ -29,21 +29,29 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 		log.Printf("failed to fetch students: %v", err)
 		return nil
 	}
+	delete := make([]widget.Clickable, len(students))
 
 	studentsLayout := func(gtx layout.Context) layout.Dimensions {
 		return material.List(th, &list).Layout(gtx, len(students), func(gtx layout.Context, index int) layout.Dimensions {
 			student := students[index]
+
 			return layout.Stack{}.Layout(gtx,
 				layout.Expanded(func(gtx layout.Context) layout.Dimensions {
 					color := lightContrast
 					if index%2 == 0 {
 						color = darkContrast
 					}
+
 					max := image.Pt(gtx.Constraints.Max.X, gtx.Constraints.Min.Y)
 					paint.FillShape(gtx.Ops, color, clip.Rect{Max: max}.Op())
 					return layout.Dimensions{Size: gtx.Constraints.Min}
 				}),
-				layout.Stacked(rowInset(material.Body1(th, fmt.Sprintf("%s %s", student.Surname, student.Name)).Layout)),
+				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
+					return layout.Flex{}.Layout(gtx,
+						layout.Rigid(rowInset(material.Body1(th, fmt.Sprintf("%s %s", student.Surname, student.Name)).Layout)),
+						layout.Rigid(material.Button(th, &delete[index], "Delete").Layout),
+					)
+				})),
 			)
 		})
 	}
