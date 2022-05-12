@@ -37,6 +37,12 @@ type Storage struct {
 	DB *sqlx.DB
 }
 
+func (s Storage) DeleteRecordByID(id int) error {
+	const deleteByIdStatement = `DELETE FROM students WHERE id = ?`
+	_, err := s.DB.Exec(deleteByIdStatement, id)
+	return err
+}
+
 // New initializes a new DB given its path, or opens an existing DB, and
 // initializes the handler. Returns an error if any of the steps fails.
 func New(path string) (*Storage, error) {
