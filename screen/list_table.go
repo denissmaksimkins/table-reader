@@ -29,7 +29,12 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 		log.Printf("failed to fetch students: %v", err)
 		return nil
 	}
+	// var maxlength storage.StudentEntry                // DELETE AFTER !!!
+	// for _, i := range students {
+	//	   fmt.Println("i:", i)
+	// }
 	delete := make([]widget.Clickable, len(students))
+	edit := make([]widget.Clickable, len(students))
 
 	studentsLayout := func(gtx layout.Context) layout.Dimensions {
 		return material.List(th, &list).Layout(gtx, len(students), func(gtx layout.Context, index int) layout.Dimensions {
@@ -48,12 +53,23 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 				}),
 				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
 					return layout.Flex{}.Layout(gtx,
-						layout.Rigid(rowInset(material.Body1(th, fmt.Sprintf("%s %s", student.Surname, student.Name)).Layout)),
+						layout.Rigid(rowInset(material.Body1(th, fmt.Sprintf("%s %s  ", student.Surname, student.Name)).Layout)),
 						layout.Rigid(material.Button(th, &delete[index], "Delete").Layout),
+					)
+				})),
+				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
+					return layout.Flex{}.Layout(gtx,
+						layout.Rigid(rowInset(material.Body1(th, fmt.Sprintf("%s %s                   ", student.Surname, student.Name)).Layout)),
+						layout.Rigid(material.Button(th, &edit[index], "Edit").Layout),
 					)
 				})),
 			)
 		})
+	}
+	for _, i := range delete { // DOESN'T WORK !!!
+		if i.Clicked() {
+			state.DeleteRecordByID(1)
+		}
 	}
 
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
