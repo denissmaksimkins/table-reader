@@ -23,11 +23,12 @@ CREATE TABLE IF NOT EXISTS students (
 	insertStudentsStmt = `INSERT INTO students (name, surname) VALUES(?, ?)`
 
 	// Statement for getting all entries from `students` table.
-	selectStudentsStmt = `SELECT name, surname FROM students`
+	selectStudentsStmt = `SELECT id, name, surname FROM students`
 )
 
 // StudentEntry represents a row for a single student in the DB.
 type StudentEntry struct {
+	ID      int    `db:"id"`
 	Name    string `db:"name"`
 	Surname string `db:"surname"`
 }
