@@ -2,9 +2,11 @@ package screen
 
 import (
 	"eklase/state"
+	"eklase/storage"
 	"fmt"
 	"image"
 	"log"
+	"os"
 
 	"gioui.org/layout"
 	"gioui.org/op/clip"
@@ -13,30 +15,12 @@ import (
 	"gioui.org/widget/material"
 )
 
-// ListStudent defines a screen layout for listing existing students.
-func ListTable(th *material.Theme, state *state.State) Screen {
-	var close widget.Clickable
-	list := widget.List{List: layout.List{Axis: layout.Vertical}}
-
+func generateStudentsList(th *material.Theme, list widget.List, students []storage.StudentEntry, delete []widget.Clickable, edit []widget.Clickable) func(gtx layout.Context) layout.Dimensions {
 	lightContrast := th.ContrastBg
 	lightContrast.A = 0x11
 	darkContrast := th.ContrastBg
 	darkContrast.A = 0x33
-
-	students, err := state.Students()
-	if err != nil {
-		// TODO: Show user an error toast.
-		log.Printf("failed to fetch students: %v", err)
-		return nil
-	}
-	// var maxlength storage.StudentEntry                // DELETE AFTER !!!
-	// for _, i := range students {
-	//	   fmt.Println("i:", i)
-	// }
-	delete := make([]widget.Clickable, len(students))
-	edit := make([]widget.Clickable, len(students))
-
-	studentsLayout := func(gtx layout.Context) layout.Dimensions {
+	return func(gtx layout.Context) layout.Dimensions {
 		return material.List(th, &list).Layout(gtx, len(students), func(gtx layout.Context, index int) layout.Dimensions {
 			student := students[index]
 
@@ -66,17 +50,45 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 			)
 		})
 	}
-	for _, i := range delete { // DOESN'T WORK !!!
-		if i.Clicked() {
-			state.DeleteRecordByID(1)
-		}
+}
+
+// ListStudent defines a screen layout for listing existing students.
+func ListTable(th *material.Theme, state *state.State) Screen {
+	var close widget.Clickable
+	list := widget.List{List: layout.List{Axis: layout.Vertical}}
+
+	students, err := state.Students()
+	if err != nil {
+		// TODO: Show user an error toast.
+		log.Printf("failed to fetch students: %v", err)
+		return nil
 	}
+	// var maxlength storage.StudentEntry                // DELETE AFTER !!!
+	// for _, i := range students {
+	//	   fmt.Println("i:", i)
+	// }
+	delete := make([]widget.Clickable, len(students))
+	edit := make([]widget.Clickable, len(students))
+
+	studentsLayout := generateStudentsList(th, list, students, delete, edit)
 
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 			layout.Flexed(1, rowInset(studentsLayout)),
 			layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
 		)
+		for i, v := range delete { // DOESN'T WORK !!!
+			if v.Clicked() {
+				state.DeleteRecordByID(students[i].ID)
+			}
+		}
+		students, err = state.Students()
+		if err != nil {
+			// TODO: Show user an error toast.
+			log.Printf("failed to fetch students: %v", err)
+			os.Exit(1)
+		}
+		studentsLayout = generateStudentsList(th, list, students, delete, edit)
 		if close.Clicked() {
 			return MainMenu(th, state), d
 		}
