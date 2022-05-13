@@ -77,8 +77,8 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 			layout.Flexed(1, rowInset(studentsLayout)),
 			layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
 		)
-		for i, v := range delete { // DOESN'T WORK !!!
-			if v.Clicked() {
+		for i := range delete {
+			if delete[i].Clicked() {
 				state.DeleteRecordByID(students[i].ID)
 			}
 		}
