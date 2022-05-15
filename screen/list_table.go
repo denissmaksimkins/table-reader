@@ -84,8 +84,7 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 		}
 		for i := range edit {
 			if edit[i].Clicked() {
-				state.DeleteRecordByID(students[i].ID)
-				return AddStudent(th, state), d // it works, but it doesn't replace the student in the same place, it adds him below
+				return EditStudent(th, state, students[i].ID), d // it works, but it doesn't replace the student in the same place, it adds him below
 			}
 		}
 		students, err = state.Students()
