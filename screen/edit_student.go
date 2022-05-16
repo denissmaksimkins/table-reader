@@ -2,7 +2,7 @@ package screen
 
 import (
 	"eklase/state"
-	"log"
+	"fmt"
 	"strings"
 
 	"gioui.org/layout"
@@ -11,7 +11,7 @@ import (
 )
 
 // AddStudent defines a screen layout for adding a new student.
-func EditStudent(th *material.Theme, state *state.State, id int) Screen {
+func EditStudent(th *material.Theme, state *state.State, id int, nameT string, surenameT string) Screen {
 	var (
 		name    widget.Editor
 		surname widget.Editor
@@ -43,6 +43,8 @@ func EditStudent(th *material.Theme, state *state.State, id int) Screen {
 			layout.Rigid(enabledIfNameOK(material.Button(th, &save, "Save").Layout)),
 		)
 	}
+	name.SetText(nameT)
+	surname.SetText(surenameT)
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 			layout.Rigid(rowInset(editsRowLayout)),
@@ -52,15 +54,7 @@ func EditStudent(th *material.Theme, state *state.State, id int) Screen {
 			return ListTable(th, state), d
 		}
 		if save.Clicked() {
-			err := state.AddStudent(
-				strings.TrimSpace(name.Text()),
-				strings.TrimSpace(surname.Text()),
-			)
-			if err != nil {
-				// TODO: Show an error toast.
-				log.Printf("unable to add student: %v", err)
-			}
-			state.DeleteRecordByID(id)
+			fmt.Println(state.EditRecordByID(id, name.Text(), surname.Text()))
 			return ListTable(th, state), d
 		}
 		return nil, d

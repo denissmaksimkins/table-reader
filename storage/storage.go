@@ -24,6 +24,10 @@ CREATE TABLE IF NOT EXISTS students (
 
 	// Statement for getting all entries from `students` table.
 	selectStudentsStmt = `SELECT id, name, surname FROM students`
+
+	updateStudentsStmt = `UPDATE students
+	SET name = ?, surname = ?
+	WHERE id = ?;`
 )
 
 // StudentEntry represents a row for a single student in the DB.
@@ -41,6 +45,14 @@ type Storage struct {
 func (s Storage) DeleteRecordByID(id int) error {
 	const deleteByIdStatement = `DELETE FROM students WHERE id = ?`
 	_, err := s.DB.Exec(deleteByIdStatement, id)
+	return err
+}
+
+// updateStudentsStmt = `UPDATE students
+// SET name = ?, surname = ?,
+// WHERE id = ?;`
+func (s Storage) EditRecordByID(id int, name string, surname string) error {
+	_, err := s.DB.Exec(updateStudentsStmt, name, surname, id)
 	return err
 }
 
