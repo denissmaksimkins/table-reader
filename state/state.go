@@ -17,6 +17,10 @@ func New(s *storage.Storage) *State {
 	return &State{storage: s}
 }
 
+func (h *State) DeleteRecordByID(id int) error {
+	return h.storage.DeleteRecordByID(id)
+}
+
 // Students returns students stored in the database.
 func (h *State) Students() ([]storage.StudentEntry, error) {
 	return h.storage.Students()
@@ -35,10 +39,4 @@ func (v *State) Quit() {
 // ShouldQuit returns whether quitting the application was requested.
 func (v *State) ShouldQuit() bool {
 	return v.quit
-}
-
-func DeleteRecordByID(id int, state *State) error {
-	const deleteByIdStatement = `DELETE FROM students WHERE id = ?`
-	_, err := state.storage.DB.Exec(deleteByIdStatement, id)
-	return err
 }

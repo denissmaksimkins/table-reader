@@ -23,11 +23,12 @@ CREATE TABLE IF NOT EXISTS students (
 	insertStudentsStmt = `INSERT INTO students (name, surname) VALUES(?, ?)`
 
 	// Statement for getting all entries from `students` table.
-	selectStudentsStmt = `SELECT name, surname FROM students`
+	selectStudentsStmt = `SELECT id, name, surname FROM students`
 )
 
 // StudentEntry represents a row for a single student in the DB.
 type StudentEntry struct {
+	ID      int    `db:"id"`
 	Name    string `db:"name"`
 	Surname string `db:"surname"`
 }
@@ -35,6 +36,12 @@ type StudentEntry struct {
 // Storage is an interface for interacting with persistent storage.
 type Storage struct {
 	DB *sqlx.DB
+}
+
+func (s Storage) DeleteRecordByID(id int) error {
+	const deleteByIdStatement = `DELETE FROM students WHERE id = ?`
+	_, err := s.DB.Exec(deleteByIdStatement, id)
+	return err
 }
 
 // New initializes a new DB given its path, or opens an existing DB, and
