@@ -2,8 +2,10 @@ package screen
 
 import (
 	"eklase/state"
+	"image/color"
 
 	"gioui.org/layout"
+	"gioui.org/text"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 )
@@ -11,23 +13,29 @@ import (
 // MainMenu defines a main menu screen layout.
 func MainMenu(th *material.Theme, state *state.State) Screen {
 	var (
-		add    widget.Clickable
-		list   widget.Clickable
-		quit   widget.Clickable
-		delete widget.Clickable
+		add  widget.Clickable
+		list widget.Clickable
+		quit widget.Clickable
 	)
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
+		matAddBut := material.Button(th, &add, "Add student")
+		matAddBut.Font = text.Font{Variant: "Mono", Weight: text.Bold}
+		matAddBut.Background = color.NRGBA{A: 0xff, R: 0x1e, G: 0x4d, B: 0x24}
+		matListBut := material.Button(th, &list, "List students")
+		matListBut.Font = text.Font{Variant: "Mono", Weight: text.Bold, Style: text.Italic}
+		matQuitBut := material.Button(th, &quit, "Quit")
+		matQuitBut.Font = text.Font{Variant: "Smallcaps", Style: text.Italic}
+
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
-			layout.Rigid(rowInset(material.Button(th, &add, "Add student").Layout)),
-			layout.Rigid(rowInset(material.Button(th, &list, "List students").Layout)),
-			layout.Rigid(rowInset(material.Button(th, &quit, "Quit").Layout)),
-			layout.Rigid(rowInset(material.Button(th, &delete, "Delete").Layout)),
+			layout.Rigid(rowInset(matAddBut.Layout)),
+			layout.Rigid(rowInset(matListBut.Layout)),
+			layout.Rigid(rowInset(matQuitBut.Layout)),
 		)
 		if add.Clicked() {
 			return AddStudent(th, state), d
 		}
 		if list.Clicked() {
-			return ListStudent(th, state), d
+			return ListTable(th, state), d
 		}
 		if quit.Clicked() {
 			state.Quit()
