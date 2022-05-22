@@ -11,7 +11,7 @@ import (
 )
 
 // AddStudent defines a screen layout for adding a new student.
-func EditStudent(th *material.Theme, state *state.State, id int, nameT string, surenameT string) Screen {
+func EditStudent(th *material.Theme, state *state.State, id int, nameT string, surnameT string) Screen {
 	var (
 		name    widget.Editor
 		surname widget.Editor
@@ -23,7 +23,7 @@ func EditStudent(th *material.Theme, state *state.State, id int, nameT string, s
 		return func(gtx layout.Context) layout.Dimensions {
 			name := strings.TrimSpace(name.Text())
 			surname := strings.TrimSpace(surname.Text())
-			if name == "" && surname == "" { // Either name or surname is OK.
+			if name == "" && surname == "" || name == nameT && surname == surnameT {
 				gtx = gtx.Disabled()
 			}
 			return w(gtx)
@@ -44,7 +44,7 @@ func EditStudent(th *material.Theme, state *state.State, id int, nameT string, s
 		)
 	}
 	name.SetText(nameT)
-	surname.SetText(surenameT)
+	surname.SetText(surnameT)
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 			layout.Rigid(rowInset(editsRowLayout)),
