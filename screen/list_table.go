@@ -7,6 +7,7 @@ import (
 	"image"
 	"log"
 	"os"
+
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
@@ -79,34 +80,34 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 	}
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
 
-
-	return func(gtx layout.Context) (Screen, layout.Dimensions) {
-		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
-			layout.Flexed(1, rowInset(studentsLayout)),
-			layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
-		)
-		for i := range delete {
-			if delete[i].Clicked() {
-				state.DeleteRecordByID(students[i].ID)
+		return func(gtx layout.Context) (Screen, layout.Dimensions) {
+			d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
+				layout.Flexed(1, rowInset(studentsLayout)),
+				layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
+			)
+			for i := range delete {
+				if delete[i].Clicked() {
+					state.DeleteRecordByID(students[i].ID)
+				}
 			}
-		}
-		for i := range edit {
-			if edit[i].Clicked() {
-				return EditStudent(th, state, students[i].ID, students[i].Name, students[i].Surname), d // it works, but it doesn't replace the student in the same place, it adds him below
+			for i := range edit {
+				if edit[i].Clicked() {
+					return EditStudent(th, state, students[i].ID, students[i].Name, students[i].Surname), d // it works, but it doesn't replace the student in the same place, it adds him below
+				}
 			}
-		}
-		students, err = state.Students()
-		if err != nil {
-			// TODO: Show user an error toast.
-			log.Printf("failed to fetch students: %v", err)
-			os.Exit(1)
-		}
+			students, err = state.Students()
+			if err != nil {
+				// TODO: Show user an error toast.
+				log.Printf("failed to fetch students: %v", err)
+				os.Exit(1)
+			}
 
-		studentsLayout = generateStudentsList(th, &list, students, delete, edit, name, surname)
+			studentsLayout = generateStudentsList(th, &list, students, delete, edit, name, surname)
 
-		if close.Clicked() {
-			return MainMenu(th, state), d
+			if close.Clicked() {
+				return MainMenu(th, state), d
+			}
+			return nil, d
 		}
-		return nil, d
 	}
 }
