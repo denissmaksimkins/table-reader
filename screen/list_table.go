@@ -36,13 +36,9 @@ func generateStudentsList(th *material.Theme, list widget.List, students []stora
 					paint.FillShape(gtx.Ops, color, clip.Rect{Max: max}.Op())
 					return layout.Dimensions{Size: gtx.Constraints.Min}
 				}),
-				//layout.Expanded(func(gtx layout.Context) layout.Dimensions {
-				//	return layout.Dimensions{Size: gtx.Constraints.Min}
-				//}),
 				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
 					return layout.Flex{}.Layout(gtx,
 						layout.Rigid(rowInset(material.Body1(th, fmt.Sprintf("%s %s", student.Surname, student.Name)).Layout)),
-						// layout.Rigid(material.Button(th, &delete[index], "Delete").Layout),
 					)
 				})),
 				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
@@ -94,8 +90,8 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
 
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
-			layout.Flexed(1, rowInset(studentsLayout)),
 			layout.Rigid(rowInset(editsRowLayout)),
+			layout.Flexed(1, rowInset(studentsLayout)),
 			layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
 		)
 
