@@ -18,7 +18,11 @@ func MainMenu(th *material.Theme, state *state.State) Screen {
 		quit widget.Clickable
 	)
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
-		// widgetColour(gtx)
+		// th.Bg = color.NRGBA{A: 0xff, R: 0x5e, G: 0x9c, B: 0x64}
+		// th.ContrastBg = color.NRGBA{A: 0xff, R: 0x5e, G: 0x9c, B: 0x64}
+		// th.Palette = material.Palette{Bg: color.NRGBA{A: 0xff, R: 0x5e, G: 0x9c, B: 0x64}}
+
+		/// widgetColour(gtx)
 		matAddBut := material.Button(th, &add, "Add student")
 		matAddBut.Font = text.Font{Variant: "Mono", Weight: text.Bold, Style: text.Italic}
 		matAddBut.Background = color.NRGBA{A: 0xff, R: 0x1e, G: 0x4d, B: 0x24}
