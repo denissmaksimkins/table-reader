@@ -25,13 +25,9 @@ func (h *State) EditRecordByID(id int, name, surname string) error {
 	return h.storage.EditRecordByID(id, name, surname)
 }
 
-func (h *State) SearchRecord(name, surname string) error {
-	return h.storage.SearchRecord(name, surname)
-}
-
 // Students returns students stored in the database.
-func (h *State) Students() ([]storage.StudentEntry, error) {
-	return h.storage.Students()
+func (h *State) Students(name, surname string) ([]storage.StudentEntry, error) {
+	return h.storage.Students(name, surname)
 }
 
 // AddStudent adds a student to the database.

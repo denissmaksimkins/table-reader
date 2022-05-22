@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS students (
 	insertStudentsStmt = `INSERT INTO students (name, surname) VALUES(?, ?)`
 
 	// Statement for getting all entries from `students` table.
-	selectStudentsStmt = `SELECT id, name, surname FROM students`
+	selectStudentsStmt = `SELECT id, name, surname FROM students WHERE name like ? AND surname like ?`
 
 	deleteByIdStatement = `DELETE FROM students WHERE id = ?`
 
@@ -55,11 +55,6 @@ func (s Storage) DeleteRecordByID(id int) error {
 // WHERE id = ?;`
 func (s Storage) EditRecordByID(id int, name, surname string) error {
 	_, err := s.DB.Exec(updateStudentsStmt, name, surname, id)
-	return err
-}
-
-func (s Storage) SearchRecord(name, surname string) error {
-	_, err := s.DB.Exec(searchStudentsStmt, name+"%", surname+"%")
 	return err
 }
 
@@ -97,11 +92,11 @@ func (s *Storage) Close() error {
 }
 
 // Students returns a slice of existing students.
-func (s Storage) Students() ([]StudentEntry, error) {
+func (s Storage) Students(name, surename string) ([]StudentEntry, error) {
 	var entries []StudentEntry
 	// Read rows from the `students` table and populate students field in the
 	// handler.
-	if err := s.DB.Select(&entries, selectStudentsStmt); err != nil {
+	if err := s.DB.Select(&entries, selectStudentsStmt, name+"%", surename+"%"); err != nil {
 		return nil, fmt.Errorf("querying 'students' table failed. Query: %v\nError: %v", selectStudentsStmt, err)
 	}
 	return entries, nil

@@ -72,8 +72,8 @@ func generateStudentsList(th *material.Theme, list widget.List, students []stora
 func ListTable(th *material.Theme, state *state.State) Screen {
 	var close widget.Clickable
 	list := widget.List{List: layout.List{Axis: layout.Vertical}}
-
-	students, err := state.Students()
+	var name, surname widget.Editor
+	students, err := state.Students(name.Text(), surname.Text())
 	if err != nil {
 		// TODO: Show user an error toast.
 		log.Printf("failed to fetch students: %v", err)
@@ -82,8 +82,6 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 
 	delete := make([]widget.Clickable, len(students))
 	edit := make([]widget.Clickable, len(students))
-	var name, surname widget.Editor
-	var search widget.Clickable
 
 	studentsLayout := generateStudentsList(th, list, students, delete, edit, name, surname)
 	editsRowLayout := func(gtx layout.Context) layout.Dimensions {
@@ -93,17 +91,11 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 			layout.Flexed(1, material.Editor(th, &surname, "Last name").Layout),
 		)
 	}
-	buttonsRowLayout := func(gtx layout.Context) layout.Dimensions {
-		return layout.Flex{Axis: layout.Horizontal, Spacing: layout.SpaceStart}.Layout(gtx,
-			layout.Rigid(material.Button(th, &search, "Search").Layout),
-		)
-	}
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
 
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 			layout.Flexed(1, rowInset(studentsLayout)),
 			layout.Rigid(rowInset(editsRowLayout)),
-			layout.Rigid(rowInset(buttonsRowLayout)),
 			layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
 		)
 
@@ -117,12 +109,8 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 				return EditStudent(th, state, students[i].ID, students[i].Name, students[i].Surname), d
 			}
 		}
-		if search.Clicked() {
-			fmt.Println(state.SearchRecord(name.Text(), surname.Text()))
-			return ListTable(th, state), d
-		}
 
-		students, err = state.Students()
+		students, err = state.Students(name.Text(), surname.Text())
 		if err != nil {
 			// TODO: Show user an error toast.
 			log.Printf("failed to fetch students: %v", err)
