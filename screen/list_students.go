@@ -1,5 +1,5 @@
 package screen
-/*
+
 import (
 	"eklase/state"
 	"fmt"
@@ -59,4 +59,3 @@ func ListStudent(th *material.Theme, state *state.State) Screen {
 		return nil, d
 	}
 }
-*/

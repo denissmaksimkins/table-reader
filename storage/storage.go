@@ -19,18 +19,15 @@ CREATE TABLE IF NOT EXISTS students (
 	PRIMARY KEY(id AUTOINCREMENT)
 );`
 	// Statement for adding a new entry into `students` table.
+
 	insertStudentsStmt = `INSERT INTO students (name, surname) VALUES(?, ?)`
 
 	// Statement for getting all entries from `students` table.
-	selectStudentsStmt = `SELECT id, name, surname FROM students WHERE name like ? AND surname like ?`
-
-	deleteByIdStatement = `DELETE FROM students WHERE id = ?`
+	selectStudentsStmt = `SELECT id, name, surname FROM students`
 
 	updateStudentsStmt = `UPDATE students
 	SET name = ?, surname = ?
 	WHERE id = ?;`
-
-	searchStudentsStmt = `SELECT * FROM students WHERE name LIKE ? AND surname LIKE ?`
 )
 
 // StudentEntry represents a row for a single student in the DB.
@@ -46,6 +43,7 @@ type Storage struct {
 }
 
 func (s Storage) DeleteRecordByID(id int) error {
+	const deleteByIdStatement = `DELETE FROM students WHERE id = ?`
 	_, err := s.DB.Exec(deleteByIdStatement, id)
 	return err
 }
@@ -53,7 +51,7 @@ func (s Storage) DeleteRecordByID(id int) error {
 // updateStudentsStmt = `UPDATE students
 // SET name = ?, surname = ?,
 // WHERE id = ?;`
-func (s Storage) EditRecordByID(id int, name, surname string) error {
+func (s Storage) EditRecordByID(id int, name string, surname string) error {
 	_, err := s.DB.Exec(updateStudentsStmt, name, surname, id)
 	return err
 }
@@ -92,11 +90,11 @@ func (s *Storage) Close() error {
 }
 
 // Students returns a slice of existing students.
-func (s Storage) Students(name, surename string) ([]StudentEntry, error) {
+func (s Storage) Students() ([]StudentEntry, error) {
 	var entries []StudentEntry
 	// Read rows from the `students` table and populate students field in the
 	// handler.
-	if err := s.DB.Select(&entries, selectStudentsStmt, name+"%", surename+"%"); err != nil {
+	if err := s.DB.Select(&entries, selectStudentsStmt); err != nil {
 		return nil, fmt.Errorf("querying 'students' table failed. Query: %v\nError: %v", selectStudentsStmt, err)
 	}
 	return entries, nil
