@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS students (
 	WHERE id = ?;`
 
 	searchStudentsStmt = `SELECT name, surname FROM students
-	WHERE name = ?%, surname = ?%`
+	WHERE name like ?%, surname like ?%`
 )
 
 // StudentEntry represents a row for a single student in the DB.
