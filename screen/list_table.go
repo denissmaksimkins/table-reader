@@ -15,14 +15,14 @@ import (
 	"gioui.org/widget/material"
 )
 
-func generateStudentsList(th *material.Theme, list widget.List, students []storage.StudentEntry, delete []widget.Clickable, edit []widget.Clickable, name widget.Editor, surname widget.Editor) func(gtx layout.Context) layout.Dimensions {
+func generateStudentsList(th *material.Theme, list *widget.List, students []storage.StudentEntry, delete []widget.Clickable, edit []widget.Clickable, name widget.Editor, surname widget.Editor) func(gtx layout.Context) layout.Dimensions {
 	lightContrast := th.ContrastBg
 	lightContrast.A = 0x11
 	darkContrast := th.ContrastBg
 	darkContrast.A = 0x33
 
 	return func(gtx layout.Context) layout.Dimensions {
-		return material.List(th, &list).Layout(gtx, len(students), func(gtx layout.Context, index int) layout.Dimensions {
+		return material.List(th, list).Layout(gtx, len(students), func(gtx layout.Context, index int) layout.Dimensions {
 			student := students[index]
 
 			return layout.Stack{}.Layout(gtx,
@@ -79,7 +79,7 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 	delete := make([]widget.Clickable, len(students))
 	edit := make([]widget.Clickable, len(students))
 
-	studentsLayout := generateStudentsList(th, list, students, delete, edit, name, surname)
+	studentsLayout := generateStudentsList(th, &list, students, delete, edit, name, surname)
 	editsRowLayout := func(gtx layout.Context) layout.Dimensions {
 		return layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
 			layout.Flexed(1, material.Editor(th, &name, "First name").Layout),
@@ -112,7 +112,7 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 			log.Printf("failed to fetch students: %v", err)
 			os.Exit(1)
 		}
-		studentsLayout = generateStudentsList(th, list, students, delete, edit, name, surname)
+		studentsLayout = generateStudentsList(th, &list, students, delete, edit, name, surname)
 		if close.Clicked() {
 			return MainMenu(th, state), d
 		}
