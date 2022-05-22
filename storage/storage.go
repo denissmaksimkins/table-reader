@@ -92,11 +92,11 @@ func (s *Storage) Close() error {
 }
 
 // Students returns a slice of existing students.
-func (s Storage) Students(name, surename string) ([]StudentEntry, error) {
+func (s Storage) Students(name, surname string) ([]StudentEntry, error) {
 	var entries []StudentEntry
 	// Read rows from the `students` table and populate students field in the
 	// handler.
-	if err := s.DB.Select(&entries, selectStudentsStmt, name+"%", surename+"%"); err != nil {
+	if err := s.DB.Select(&entries, selectStudentsStmt, name+"%", surname+"%"); err != nil {
 		return nil, fmt.Errorf("querying 'students' table failed. Query: %v\nError: %v", selectStudentsStmt, err)
 	}
 	return entries, nil
