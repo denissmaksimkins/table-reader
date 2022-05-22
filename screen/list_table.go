@@ -15,30 +15,13 @@ import (
 	"gioui.org/widget/material"
 )
 
-func generateStudentsList(th *material.Theme, list widget.List, students []storage.StudentEntry, delete []widget.Clickable, edit []widget.Clickable, name widget.Editor, surname widget.Editor, search widget.Clickable) func(gtx layout.Context) layout.Dimensions {
+func generateStudentsList(th *material.Theme, list widget.List, students []storage.StudentEntry, delete []widget.Clickable, edit []widget.Clickable, name widget.Editor, surname widget.Editor) func(gtx layout.Context) layout.Dimensions {
 	lightContrast := th.ContrastBg
 	lightContrast.A = 0x11
 	darkContrast := th.ContrastBg
 	darkContrast.A = 0x33
 
-	editsRowLayout := func(gtx layout.Context) layout.Dimensions {
-		return layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
-			layout.Flexed(1, material.Editor(th, &name, "First name").Layout),
-			layout.Rigid(spacer.Layout),
-			layout.Flexed(1, material.Editor(th, &surname, "Last name").Layout),
-		)
-	}
-	buttonsRowLayout := func(gtx layout.Context) layout.Dimensions {
-		return layout.Flex{Axis: layout.Horizontal, Spacing: layout.SpaceStart}.Layout(gtx,
-			layout.Rigid(material.Button(th, &search, "Search").Layout),
-		)
-	}
-
 	return func(gtx layout.Context) layout.Dimensions {
-		layout.Flex{Axis: layout.Vertical}.Layout(gtx,
-			layout.Rigid(rowInset(editsRowLayout)),
-			layout.Rigid(rowInset(buttonsRowLayout)),
-		)
 		return material.List(th, &list).Layout(gtx, len(students), func(gtx layout.Context, index int) layout.Dimensions {
 			student := students[index]
 
@@ -102,13 +85,28 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 	var name, surname widget.Editor
 	var search widget.Clickable
 
-	studentsLayout := generateStudentsList(th, list, students, delete, edit, name, surname, search)
-
+	studentsLayout := generateStudentsList(th, list, students, delete, edit, name, surname)
+	editsRowLayout := func(gtx layout.Context) layout.Dimensions {
+		return layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
+			layout.Flexed(1, material.Editor(th, &name, "First name").Layout),
+			layout.Rigid(spacer.Layout),
+			layout.Flexed(1, material.Editor(th, &surname, "Last name").Layout),
+		)
+	}
+	buttonsRowLayout := func(gtx layout.Context) layout.Dimensions {
+		return layout.Flex{Axis: layout.Horizontal, Spacing: layout.SpaceStart}.Layout(gtx,
+			layout.Rigid(material.Button(th, &search, "Search").Layout),
+		)
+	}
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
+
 		d := layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 			layout.Flexed(1, rowInset(studentsLayout)),
+			layout.Rigid(rowInset(editsRowLayout)),
+			layout.Rigid(rowInset(buttonsRowLayout)),
 			layout.Rigid(rowInset(material.Button(th, &close, "Close").Layout)),
 		)
+
 		for i := range delete {
 			if delete[i].Clicked() {
 				state.DeleteRecordByID(students[i].ID)
@@ -119,17 +117,14 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 				return EditStudent(th, state, students[i].ID, students[i].Name, students[i].Surname), d
 			}
 		}
-		nameT, surnameT := name.Text(), surname.Text()
-		if search.Clicked() {
-			state.SearchRecord(nameT, surnameT)
-		}
+
 		students, err = state.Students()
 		if err != nil {
 			// TODO: Show user an error toast.
 			log.Printf("failed to fetch students: %v", err)
 			os.Exit(1)
 		}
-		studentsLayout = generateStudentsList(th, list, students, delete, edit, name, surname, search)
+		studentsLayout = generateStudentsList(th, list, students, delete, edit, name, surname)
 		if close.Clicked() {
 			return MainMenu(th, state), d
 		}
