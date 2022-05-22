@@ -18,11 +18,11 @@ func MainMenu(th *material.Theme, state *state.State) Screen {
 		quit widget.Clickable
 	)
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
-		// th.Bg = color.NRGBA{A: 0xff, R: 0x5e, G: 0x9c, B: 0x64}
-		// th.ContrastBg = color.NRGBA{A: 0xff, R: 0x5e, G: 0x9c, B: 0x64}
-		// th.Palette = material.Palette{Bg: color.NRGBA{A: 0xff, R: 0x5e, G: 0x9c, B: 0x64}}
+		// widgetcolor := th.ContrastBg                                 To change widget's background's colour
+		// widgetcolor.A = 0x45
+		// max := image.Pt(gtx.Constraints.Max.X, gtx.Constraints.Min.Y)
+		// paint.FillShape(gtx.Ops, widgetcolor, clip.Rect{Max: max}.Op())
 
-		/// widgetColour(gtx)
 		matAddBut := material.Button(th, &add, "Add student")
 		matAddBut.Font = text.Font{Variant: "Mono", Weight: text.Bold, Style: text.Italic}
 		matAddBut.Background = color.NRGBA{A: 0xff, R: 0x1e, G: 0x4d, B: 0x24}
