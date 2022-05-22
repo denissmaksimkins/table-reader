@@ -21,8 +21,12 @@ func (h *State) DeleteRecordByID(id int) error {
 	return h.storage.DeleteRecordByID(id)
 }
 
-func (h *State) EditRecordByID(id int, name, surename string) error {
-	return h.storage.EditRecordByID(id, name, surename)
+func (h *State) EditRecordByID(id int, name, surname string) error {
+	return h.storage.EditRecordByID(id, name, surname)
+}
+
+func (h *State) SearchRecord(name, surname string) error {
+	return h.storage.SearchRecord(name, surname)
 }
 
 // Students returns students stored in the database.
