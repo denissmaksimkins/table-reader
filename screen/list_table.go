@@ -117,6 +117,10 @@ func ListTable(th *material.Theme, state *state.State) Screen {
 				return EditStudent(th, state, students[i].ID, students[i].Name, students[i].Surname), d
 			}
 		}
+		if search.Clicked() {
+			fmt.Println(state.SearchRecord(name.Text(), surname.Text()))
+			return ListTable(th, state), d
+		}
 
 		students, err = state.Students()
 		if err != nil {

@@ -30,8 +30,7 @@ CREATE TABLE IF NOT EXISTS students (
 	SET name = ?, surname = ?
 	WHERE id = ?;`
 
-	searchStudentsStmt = `SELECT name, surname FROM students
-	WHERE name like ?%, surname like ?%`
+	searchStudentsStmt = `SELECT * FROM students WHERE name LIKE ? AND surname LIKE ?`
 )
 
 // StudentEntry represents a row for a single student in the DB.
@@ -60,7 +59,7 @@ func (s Storage) EditRecordByID(id int, name, surname string) error {
 }
 
 func (s Storage) SearchRecord(name, surname string) error {
-	_, err := s.DB.Exec(searchStudentsStmt, name, surname)
+	_, err := s.DB.Exec(searchStudentsStmt, name+"%", surname+"%")
 	return err
 }
 
