@@ -18,7 +18,7 @@ func MainMenu(th *material.Theme, state *state.State) Screen {
 		quit widget.Clickable
 	)
 	return func(gtx layout.Context) (Screen, layout.Dimensions) {
-		// widgetcolor := th.ContrastBg                                 To change widget's background's colour
+		// widgetcolor := th.ContrastBg                                 To change the widget's background color
 		// widgetcolor.A = 0x45
 		// max := image.Pt(gtx.Constraints.Max.X, gtx.Constraints.Min.Y)
 		// paint.FillShape(gtx.Ops, widgetcolor, clip.Rect{Max: max}.Op())
