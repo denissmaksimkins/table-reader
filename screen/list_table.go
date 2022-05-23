@@ -50,7 +50,6 @@ func generateStudentsList(th *material.Theme, list *widget.List, students []stor
 				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
 					return layout.Flex{}.Layout(gtx,
 						layout.Rigid(rowInset(material.Body1(th, fmt.Sprintf("%s %s", student.Surname, student.Name)).Layout)),
-						// layout.Rigid(material.Button(th, &edit[index], "Edit").Layout),
 					)
 				})),
 				layout.Stacked(rowInset(func(gtx layout.Context) layout.Dimensions {
